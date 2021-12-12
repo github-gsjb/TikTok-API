@@ -1,7 +1,7 @@
 # TikTok-API
 An API that allows you to get full information about TikTok videos without using any third party sources and only the TikTok API.
 
-##API only allows to gather data, and not to bot an account.##
+This API is for scrapping only, not account botting
 
 This is a small project of mine and was made public to help others, feel free to fork this project and make a better documentation/api.
 
