@@ -1,9 +1,15 @@
 # TikTok-API
-An API that allows you to get full information about TikTok videos without using any third party sources and only the TikTok API.
+The API gives the ability to scrape the following data from tiktok:
 
-This API is for scrapping only, not account botting
+Post information (Including the watermark and no watermark video url)
 
-This is a small project of mine and was made public to help others, feel free to fork this project and make a better documentation/api.
+User data
+
+User posts
+
+People following a user
+
+People the user is following
 
 # More
 (Updated @ 12-9-2021) V0.0.12 Beta for Python 3.x.x
