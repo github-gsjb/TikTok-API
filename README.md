@@ -20,3 +20,8 @@ Use example.py for now
 https://www.codenong.com/cs109390694/
 
 https://github.com/szdc/tiktok-api
+
+ Markup : * Bullet list
+              * Nested bullet
+                  * Sub-nested bullet etc
+          * Bullet list item 2
