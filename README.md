@@ -1,5 +1,5 @@
 # TikTok-API
-The API gives the ability to scrape the following data from tiktok:
+The API is for scraping only and gives the ability to access the following data from tiktok:
 
 Post information (Including the watermark and no watermark video url)
 
