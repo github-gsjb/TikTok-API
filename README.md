@@ -1,7 +1,8 @@
 # TikTok-API
 The API is for __scraping only__ and gives the ability to access the following data from tiktok:
 
- Markup : *Post information (Including the watermark and no watermark video url) *User data
+ Markup : *Post information (Including the watermark and no watermark video url) 
+          *User data
           *User posts
           *People following a user
           *People the user is following
