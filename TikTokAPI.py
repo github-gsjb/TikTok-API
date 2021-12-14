@@ -9,6 +9,7 @@ import time
 import requests
 from urllib.parse import urlparse
 import json
+from bs4 import BeautifulSoup
 
 class TTAPI:
     def __init__(self):
@@ -258,6 +259,19 @@ class TTAPI:
             return response
         except:
             return {} #Error
+
+    def TTNEXTDATA(self, url):
+        try:
+            headers = {
+                'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
+            }
+            html = requests.get(url, headers=headers).text
+            htmlParsed = BeautifulSoup(html, "html.parser")
+            script = htmlParsed.find("script", id="__NEXT_DATA__")
+            NEXT_DATA = script.contents[0]
+            return json.loads(NEXT_DATA)
+        except:
+            return {} #Error
     
     #Device parameters======================================================================================================================================================
     def getDeviceParams(self, paramUrl):
@@ -285,6 +299,9 @@ class TTAPI:
     #TikTok API Methods======================================================================================================================================================
     def getPost(self, id): #Gets a post.
         return self.TTAPIRequest("/aweme/v1/aweme/detail/",{'aweme_id':id},self.deviceParams)
+
+    def listComments(self, id, amount): #Lists comments for a post.
+        return self.TTAPIRequest("/aweme/v1/comment/list/",{'aweme_id':id,"count":amount},self.deviceParams)
     
     def getUser(self, id): #Gets a user's profile.
         return self.TTAPIRequest("/aweme/v1/user/",{'user_id':id},self.deviceParams)
@@ -298,94 +315,23 @@ class TTAPI:
     def listFollowing(self, id): #Lists the users that the specified user follows.
         return self.TTAPIRequest("/aweme/v1/user/following/list/",{'user_id':id},self.deviceParams)
 
-    #Url ID finder======================================================================================================================================================
+    #ID finder======================================================================================================================================================
     def getPostId(self, url):
         #Sample url's:
-        #https://vm.tiktok.com/(stringId)
-        #https://vt.tiktok.com/(stringId)
-        #https://m.tiktok.com/v/(intId)
-        #https://tiktok.com/@(userName)/video/(intId)
+        #https://vm.tiktok.com/abcde
+        #https://vt.tiktok.com/abcde
+        #https://m.tiktok.com/v/12345
+        #https://tiktok.com/@user/video/12345
         
-        parsedUrl = urlparse(url)
-        if parsedUrl.scheme == "":
-            url = "https://"+url
-            parsedUrl = urlparse(url)
-        
-        netlocs1 = ["vm.tiktok.com","vt.tiktok.com"]
-        netlocs2 = ["m.tiktok.com","tiktok.com","www.tiktok.com"]
-        
-        netloc = parsedUrl.netloc
-
-        if netloc in netlocs1:
-            headers = {
-                'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
-            }
-            reqUrl = requests.get(url, headers=headers)
-            redirUrl = reqUrl.url
-            id = redirUrl.split("/")[-1].split("?")[0].split(".")[0]
-            return id
-        
-        elif netloc in netlocs2:
-            id = url.split("/")[-1].split("?")[0].split(".")[0]
-            return id
-        
-        else:
+        try:
+            data = self.TTNEXTDATA(url)
+            return data["props"]["pageProps"]["seoProps"]["pageId"]
+        except:
             return "" #Error
-
-    #Get simplified response======================================================================================================================================================
-    def simplifyPost(self, response):
-        post = {
-                #ID's
-                "aweme_id" : response["aweme_detail"]["aweme_id"],
-                "video_id" : response["aweme_detail"]["video"]["download_addr"]["uri"],
-                #Obj info
-                "create_time" : response["aweme_detail"]["create_time"],
-                "desc" : response["aweme_detail"]["desc"],
-                #Author
-                "author" : {
-                    #Avatars
-                    "avatar_larger" : response["aweme_detail"]["author"]["avatar_larger"]["url_list"][0],
-                    "avatar_medium" : response["aweme_detail"]["author"]["avatar_medium"]["url_list"][0],
-                    "avatar_thumb" : response["aweme_detail"]["author"]["avatar_thumb"]["url_list"][0],
-                    #ID's
-                    "uid" : response["aweme_detail"]["author"]["uid"],
-                    "sec_uid" : response["aweme_detail"]["author"]["sec_uid"],
-                    #Names
-                    "nickname" : response["aweme_detail"]["author"]["nickname"],
-                    "unique_id" : response["aweme_detail"]["author"]["unique_id"]
-                },
-                #Music
-                "music" : {
-                    #Names
-                    "author" : response["aweme_detail"]["music"]["author"],
-                    "title" : response["aweme_detail"]["music"]["title"],
-                    #ID's
-                    "id" : response["aweme_detail"]["music"]["id"],
-                    #Cover's
-                    "cover_large" : response["aweme_detail"]["music"]["cover_large"]["url_list"][0],
-                    "cover_medium" : response["aweme_detail"]["music"]["cover_medium"]["url_list"][0],
-                    "cover_thumb" : response["aweme_detail"]["music"]["cover_thumb"]["url_list"][0],
-                    #Play
-                    "play_url" : response["aweme_detail"]["music"]["play_url"]["uri"]
-                },
-                #Statistics
-                "statistics" : response["aweme_detail"]["statistics"],
-                #Video
-                "video" : {
-                    #Cover's
-                    "cover" : response["aweme_detail"]["video"]["cover"]["url_list"][0],
-                    "dynamic_cover" : response["aweme_detail"]["video"]["dynamic_cover"]["url_list"][0],
-                    "animated_cover" : response["aweme_detail"]["video"]["animated_cover"]["url_list"][0],
-                    #File info
-                    "width" : response["aweme_detail"]["video"]["width"],
-                    "height" : response["aweme_detail"]["video"]["height"],
-                    "ratio" : response["aweme_detail"]["video"]["ratio"],
-                    "duration" : response["aweme_detail"]["video"]["duration"],
-                    #Play (No Watermark Source)
-                    "play_addr" : response["aweme_detail"]["video"]["play_addr"]["url_list"][0],
-                    #Download (Watermark Source)
-                    "download_addr" : response["aweme_detail"]["video"]["download_addr"]["url_list"][0]
-                }
-            }
-
-        return post
+        
+    def getUserId(self, url):
+        try:
+            data = self.TTNEXTDATA(url)
+            return data["props"]["pageProps"]["userInfo"]["user"]["id"]
+        except:
+            return "" #Error
