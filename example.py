@@ -4,25 +4,28 @@ from TikTokAPI import TTAPI
 #Create API object:
 api = TTAPI()
 
-#Now lets get the information from a specific tiktok video post
+#TikTok post url's can be in any formats:
+#https://vm.tiktok.com/abcde
+#https://vt.tiktok.com/abcde
+#https://m.tiktok.com/v/12345
+#https://tiktok.com/@user/video/12345
 
-#TikTok video url's can be in the following formats:
-#https://vm.tiktok.com/(stringId)
-#https://vt.tiktok.com/(stringId)
-#https://m.tiktok.com/v/(intId)
-#https://tiktok.com/@(userName)/video/(intId)
+#Get the id of the post using a url:
+postId = api.getPostId("https://www.tiktok.com/@tiktok/video/6839775130407750917")
 
-#Get the id of the video post using a url:
-postId = api.getPostId("https://www.tiktok.com/@elpanaarabe/video/7038818332270808325")
+#Print id
 print("The post id is "+postId+"\n")
 
-#Get the video post information using the id:
+#Get post info
 postInfo = api.getPost(postId)
 
-#Print out the info in the console:
+#Print post info
 print(postInfo)
 
-#Get author id
+#Print 30 comments of post
+print(api.listComments(postId, "30"))
+
+#Get user id
 authorId = postInfo["aweme_detail"]["author"]["uid"]
 
 #Print user info
