@@ -9,7 +9,7 @@ The API is for __scraping only__ and gives the ability to access the following d
 * People the user is following
 
 # More
-(Updated @ 12-10-2021) V0.1.0 Beta for Python 3.x.x
+(Updated @ 12-12-2021) V0.1.0 Beta for Python 3.x.x
 
 This API requires the requests lib https://docs.python-requests.org/en/latest/
 
